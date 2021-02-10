@@ -64,31 +64,9 @@ for participant = 1:Participant
             
             output(channel, piece, :, :) = coefs;
             
-            % Figures
-            % 3d Figure
-            %surf(coefs);shading interp;
-            %sc = wscalogram('no',coefs);
-            
-                       
-            %frameSize = 60/frameNum;
-            %start = 1;
-            % split frames
-            %data2 = zeros(totalScale,frameNum);
-            %for k = 1: frameNum
-            %    output(channel,:,k) = sum(sc(:,start:(frameSize*Fs)*k), 2)/(frameSize*Fs);
-            %    start = start + (frameSize*Fs);
-            %end
-             %fprintf('.');
            end 
         end
         save(filename,'output');
-        %fprintf('size(A) is %s\n', mat2str(size(output)));
-        %output2d = reshape(output,[Channel*totalScale,frameNum]);
-        %for k = 1:Channel*totalScale
-        %    fprintf(fid, '%g,',output2d(k,:));
-        %    fprintf(fid, '\n');
-        %end
-       
-        %fclose(fid);
+        
     end %the testcase loop
 end %the file loop
