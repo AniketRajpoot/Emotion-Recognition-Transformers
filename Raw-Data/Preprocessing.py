@@ -73,7 +73,7 @@ for sub in labelll:
 ##      all_labels_test[count] = label
 ##      count += 1
 
-all_data = dataset.reshape(-1,32,3840)
+all_data = dataset.reshape(-1,32,2,3840).transpose(0,2,1,3).reshape(-1,32,3840)
 all_labels = all_labels.reshape(-1,2)
 
 from sklearn.model_selection import train_test_split
