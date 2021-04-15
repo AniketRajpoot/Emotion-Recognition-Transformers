@@ -48,46 +48,36 @@ for filename in get_all_purp(directory):
 dataset = np.array(dataset)
 labels = np.array(labels)
 print('shape : ', len(dataset),' : ', dataset.shape)
-
 print('shape : ', labels.shape)
-
 with open('/content/drive/MyDrive/EMOTION/VQVAE-trans/Trans-checkpoints-py/labels_val_arousal.pkl', 'wb') as filepath:
       pickle.dump(labels, filepath)
-      
 all_labels = np.zeros((40*2*32,2))
 #all_labels_test = np.zeros(12800)
 count = 0
 labelll = labels[:]
 #labelll_test = (labels[-1]).reshape(1,-1)
-
 for sub in labelll:
   for label in sub:
     for i in range(2):
       all_labels[count] = label
       count += 1
-
 ##count = 0
 ##for sub in labelll_test:
 ##  for label in sub:
 ##    for i in range(320):
 ##      all_labels_test[count] = label
 ##      count += 1
-
 all_data = dataset.reshape(-1,32,3840)
 all_labels = all_labels.reshape(-1,2)
-
 from sklearn.model_selection import train_test_split
 ## MIXED DATA
 X_train, X_test, y_train, y_test = train_test_split(all_data, all_labels, test_size=0.2, random_state=42)
-
 print(f"Train Data: {len(X_train)}")
 print(f"Validation Data: {len(X_test)}")
-
 with open('/content/drive/MyDrive/EMOTION/VQVAE-trans/Trans-checkpoints-py/final_video_X_train_30.pkl', 'wb') as filepath:
       pickle.dump(X_train, filepath)
 with open('/content/drive/MyDrive/EMOTION/VQVAE-trans/Trans-checkpoints-py/labels_final_video_y_train_30.pkl', 'wb') as filepath:
       pickle.dump(y_train, filepath)
-
 with open('/content/drive/MyDrive/EMOTION/VQVAE-trans/Trans-checkpoints-py/final_video_X_test_30.pkl', 'wb') as filepath:
       pickle.dump(X_test, filepath)
 with open('/content/drive/MyDrive/EMOTION/VQVAE-trans/Trans-checkpoints-py/labels_final_video_y_test_30.pkl', 'wb') as filepath:
