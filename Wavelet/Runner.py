@@ -1,48 +1,26 @@
-import math
-import six
-import tensorflow as tf
-from einops.layers.tensorflow import Rearrange
 import logging
-import numpy as np
-import tensorflow as tf
-from fastprogress import master_bar, progress_bar
-import pandas as pd
-import random
-import glob
-import os
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as GridSpec
-from scipy.fftpack import fft
+import logging
 import pickle as pickle
-from sklearn.preprocessing import normalize
-import _pickle as cPickle
-from sklearn import preprocessing
+
+import numpy as np
+from Dataset import *
+from Model import *
+from Trainer import *
 from sklearn.model_selection import train_test_split
-from skimage.transform import resize
-import torch
-import torch.nn as nn
-from einops import rearrange, repeat
-from collections import OrderedDict
-import torch.nn.functional as F
-import matplotlib.pyplot as plt
-from torch.utils.data import Dataset,DataLoader
-from torch.utils.data.distributed import DistributedSampler
-import tqdm
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix,classification_report
-from Model import*
-from Dataset import*
-from Trainer import*
+from torch.utils.data import DataLoader
+
 
 def save_object(obj, filename):
     with open(filename, 'wb') as output:  # Overwrites any existing file.
         pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
+
 
 def load_object(filename):
     with open(filename, 'rb') as input:  # Overwrites any existing file.
         dataset_reload = pickle.load(input)
 
     return dataset_reload
+
 
 def prepare_data():
     # Loading Data after Wavelet Transform
@@ -74,8 +52,8 @@ def prepare_data():
 
     return X_train, X_test, y_train, y_test
 
-def main():
 
+def main():
     # Getting data
     X_train, X_test, y_train, y_test = prepare_data()
 
@@ -112,6 +90,7 @@ def main():
 
     trainer = Trainer(ViT, model_config, train_loader, len(dataset), test_loader, len(dataset_test), tconf)
     trainer.train()
+
 
 if __name__ == "__main__":
     main()
