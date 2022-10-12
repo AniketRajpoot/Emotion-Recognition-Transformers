@@ -1,34 +1,9 @@
 import math
+
 import six
 import tensorflow as tf
 from einops.layers.tensorflow import Rearrange
-import logging
-import numpy as np
-import tensorflow as tf
-from fastprogress import master_bar, progress_bar
-import pandas as pd
-import random
-import glob
-import os
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as GridSpec
-from scipy.fftpack import fft
-import pickle as pickle
-from sklearn.preprocessing import normalize
-import _pickle as cPickle
-from sklearn import preprocessing
-from sklearn.model_selection import train_test_split
-from skimage.transform import resize
-import torch
-import torch.nn as nn
-from einops import rearrange, repeat
-from collections import OrderedDict
-import torch.nn.functional as F
-import matplotlib.pyplot as plt
-from torch.utils.data import Dataset,DataLoader
-from torch.utils.data.distributed import DistributedSampler
-import tqdm
-from sklearn.model_selection import train_test_split
+
 
 def gelu(x):
     """Gaussian Error Linear Unit.
@@ -93,9 +68,10 @@ class FeedForward(tf.keras.Model):
     def call(self, x):
         return self.net(x)
 
+
 class Attention(tf.keras.Model):
 
-    def __init__(self, dim, heads = 8):
+    def __init__(self, dim, heads=8):
         super().__init__()
         self.heads = heads
         self.scale = dim ** -0.5
@@ -103,7 +79,7 @@ class Attention(tf.keras.Model):
         self.to_qkv = tf.keras.layers.Dense(dim * 3, use_bias=False)
         self.to_out = tf.keras.layers.Dense(dim)
 
-        self.rearrange_qkv = Rearrange('b n (qkv h d) -> qkv b h n d', qkv = 3, h = self.heads)
+        self.rearrange_qkv = Rearrange('b n (qkv h d) -> qkv b h n d', qkv=3, h=self.heads)
         self.rearrange_out = Rearrange('b h n d -> b n (h d)')
 
     def call(self, x):
@@ -114,12 +90,13 @@ class Attention(tf.keras.Model):
         v = qkv[2]
 
         dots = tf.einsum('bhid,bhjd->bhij', q, k) * self.scale
-        attn = tf.nn.softmax(dots,axis=-1)
+        attn = tf.nn.softmax(dots, axis=-1)
 
         out = tf.einsum('bhij,bhjd->bhid', attn, v)
         out = self.rearrange_out(out)
-        out =  self.to_out(out)
+        out = self.to_out(out)
         return out
+
 
 class Transformer(tf.keras.Model):
 
@@ -128,7 +105,7 @@ class Transformer(tf.keras.Model):
         layers = []
         for _ in range(depth):
             layers.extend([
-                Residual(PreNorm(dim, Attention(dim, heads = heads))),
+                Residual(PreNorm(dim, Attention(dim, heads=heads))),
                 Residual(PreNorm(dim, FeedForward(dim, mlp_dim)))
             ])
         self.net = tf.keras.Sequential(layers)
@@ -136,12 +113,13 @@ class Transformer(tf.keras.Model):
     def call(self, x):
         return self.net(x)
 
+
 class ViT(tf.keras.Model):
 
     def __init__(self, *, image_size, patch_size, num_classes, dim, depth, heads, mlp_dim, channels=1):
         super().__init__()
         assert image_size % patch_size == 0, 'image dimensions must be divisible by the patch size'
-        num_patches = (image_size // patch_size)**2
+        num_patches = (image_size // patch_size) ** 2
         patch_dim = channels * patch_size ** 2
 
         self.patch_size = patch_size
@@ -166,7 +144,7 @@ class ViT(tf.keras.Model):
         self.to_cls_token = tf.identity
 
         self.mlp_head = tf.keras.Sequential([tf.keras.layers.Dense(mlp_dim, activation=get_activation('gelu')),
-                                        tf.keras.layers.Dense(num_classes)])
+                                             tf.keras.layers.Dense(num_classes)])
 
     @tf.function
     def call(self, img):
@@ -175,7 +153,7 @@ class ViT(tf.keras.Model):
         x = self.rearrange(img)
         x = self.patch_to_embedding(x)
 
-        cls_tokens = tf.broadcast_to(self.cls_token,(shapes[0],1,self.dim))
+        cls_tokens = tf.broadcast_to(self.cls_token, (shapes[0], 1, self.dim))
         x = tf.concat((cls_tokens, x), axis=1)
         x += self.pos_embedding
         x = self.transformer(x)

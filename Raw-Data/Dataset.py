@@ -1,50 +1,8 @@
-import math
-import six
-import tensorflow as tf
-from tensorflow import keras
-import shutil
-from enum import Enum
-from einops.layers.tensorflow import Rearrange
-import logging
-import numpy as np
-from fastprogress import master_bar, progress_bar
-import pandas as pd
-import random
-import glob
 import pickle as pickle
-from sklearn.preprocessing import normalize
-import _pickle as cPickle
-from sklearn import preprocessing
-from sklearn.model_selection import train_test_split
-from skimage.transform import resize
-import torch
-import torch.nn as nn
-from collections import OrderedDict
-import torch.nn.functional as F
-import tqdm
-from sklearn.model_selection import train_test_split
-import fnmatch
-import os
 import random
-import re
-import threading
-from six.moves import xrange
-import time
-import json
-import torch as t
-from torch.utils.data import Dataset,DataLoader
-from torch.utils.data.distributed import DistributedSampler
-from time import sleep
-import math
-import functools
-from imblearn.over_sampling import RandomOverSampler
-import absl.logging as _logging  # pylint: disable=unused-import
-import collections
-import re
-import six
-from os.path import join
-from six.moves import zip
-from absl import flags
+
+import numpy as np
+from torch.utils.data import Dataset
 
 
 class Dataset_train(Dataset):
@@ -70,7 +28,8 @@ class Dataset_train(Dataset):
         with open('./data/labels_final_video_y_train2.pkl',
                   'rb') as filepath:
             self.new_labels = pickle.load(filepath)
-        self.new_dataset = self.new_dataset.reshape(-1, 768)
+        # import pdb; pdb.set_trace()
+        self.new_dataset = self.new_dataset.reshape(-1, 2048 * 2)
 
     def __len__(self):
         'Denotes the total number of samples'
@@ -154,7 +113,7 @@ class Dataset_test(Dataset):
         with open('./data/labels_final_video_y_test2.pkl',
                   'rb') as filepath:
             self.new_labels = pickle.load(filepath)
-        self.new_dataset = self.new_dataset.reshape(-1, 768)
+        self.new_dataset = self.new_dataset.reshape(-1, 2048 * 2)
 
         self.geneva_ch_names = ['Fp1'
             , 'AF3'
